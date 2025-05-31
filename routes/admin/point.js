@@ -123,7 +123,7 @@ module.exports = function (fastify, opts, next) {
             },
         },
         async handler(request, reply) {
-            const data = await job.updateUser(request.params, request.body, request.info);
+            const data = await job.updateUser({ ...request.params, ...request.body }, request.info);
             
             if (data.statusCode !== 200) {
                 reply.code(data.statusCode);
