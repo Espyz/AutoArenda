@@ -2,6 +2,7 @@ require('dotenv');
 const Pool = require('pg-pool');
 const logger = require('winston');
 const jwt = require('jsonwebtoken');
+const constants = require('./services/constants');
 
 const winston = logger.createLogger({
     level:      'info',
@@ -14,6 +15,7 @@ const winston = logger.createLogger({
         new logger.transports.Console(),
     ],
 });
+
 //TODO: exp в таблице tokens delete их
 const config = {
     user:                    process.env.DB_USER,
@@ -64,7 +66,7 @@ async function checkTokenAndSetReq(request) {
                     }
                     else {
                         winston.error(`Токен просрочен`);
-                        check = false;
+                        check = true;
                         isExpired = true;
                         request.info = {};
                     }
@@ -100,5 +102,6 @@ async function checkTokenAndSetReq(request) {
 module.exports = {
     winston:             winston,
     pool:                pool,
+    constants:           constants,
     checkTokenAndSetReq: checkTokenAndSetReq,
 };
