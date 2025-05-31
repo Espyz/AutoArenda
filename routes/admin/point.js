@@ -95,7 +95,7 @@ module.exports = function (fastify, opts, next) {
         async handler(request, reply) {
             const data = await job.createUser(request.body, request.info);
             
-            if (data.statusCode !== 201) {
+            if (data.statusCode !== 200) {
                 reply.code(data.statusCode);
             }
             
@@ -147,7 +147,7 @@ module.exports = function (fastify, opts, next) {
         async handler(request, reply) {
             const data = await job.deleteUser(request.params, request.info);
             
-            if (data.statusCode !== 204) {
+            if (data.statusCode !== 200) {
                 reply.code(data.statusCode);
             }
             
