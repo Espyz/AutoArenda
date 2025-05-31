@@ -1,11 +1,17 @@
 {
+  "scripts": {
+    "start": "node main.js",
+    "migrate": "node-pg-migrate up"
+  },
   "dependencies": {
     "dotenv": "^16.5.0",
-    "fastify": "^5.3.3",
+    "fastify": "2.11",
     "fastify-autoload": "^3.12.0",
     "fastify-cookie": "^5.6.1",
     "fastify-multipart": "^5.3.1",
+    "jsonwebtoken": "^9.0.2",
     "node-pg-migrate": "^8.0.1",
-    "pg-pool": "^3.10.0"
+    "pg-pool": "^3.10.0",
+    "winston": "^3.17.0"
   }
 }
