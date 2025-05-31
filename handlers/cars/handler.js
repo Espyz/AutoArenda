@@ -48,6 +48,10 @@ async function getCars(object) {
                                            FROM cars ${ where }
                                            LIMIT $1 OFFSET $2`, params);
         
+        for (const car of result.rows) {
+            car.status = constants.carsStatus[car.status]
+        }
+        
         data.message = result.rows;
         data.statusCode = 200;
     }
