@@ -1,5 +1,5 @@
 const { winston, checkTokenAndSetReq } = require('../../dependes');
-const job = require('../../handlers/cars/handler');
+const job = require('../../handlers/reviews/handler');
 
 module.exports = function (fastify, opts, next) {
     fastify.addHook('preHandler', async (request, reply) => {
@@ -32,26 +32,24 @@ module.exports = function (fastify, opts, next) {
         url:    '/',
         schema: {
             querystring: {
-                type:       'object',
+                type: 'object',
                 properties: {
                     page:    { type: 'integer' },
                     limit:   { type: 'integer' },
-                    type:    { type: 'string' },
-                    minYear: { type: 'integer' },
-                    maxYear: { type: 'integer' },
-                    status:  { type: 'string' },
-                },
-            },
+                    carId:   { type: 'integer' },
+                    userId:  { type: 'integer' }
+                }
+            }
         },
         async handler(request, reply) {
-            const data = await job.getCars(request.query);
+            const data = await job.getReviews(request.query, request.info);
             
             if (data.statusCode !== 200) {
                 reply.code(data.statusCode);
             }
             
             reply.send(data);
-        },
+        }
     });
     
     fastify.route({
@@ -59,21 +57,21 @@ module.exports = function (fastify, opts, next) {
         url:    '/:id',
         schema: {
             params: {
-                type:       'object',
+                type: 'object',
                 properties: {
-                    id: { type: 'integer' },
-                },
-            },
+                    id: { type: 'integer' }
+                }
+            }
         },
         async handler(request, reply) {
-            const data = await job.getCarById(request.params);
+            const data = await job.getReviewById(request.params, request.info);
             
             if (data.statusCode !== 200) {
                 reply.code(data.statusCode);
             }
             
             reply.send(data);
-        },
+        }
     });
     
     fastify.route({
@@ -81,27 +79,25 @@ module.exports = function (fastify, opts, next) {
         url:    '/',
         schema: {
             body: {
-                type:       'object',
-                required:   [ 'brand', 'model', 'year', 'type', 'dailyPrice' ],
+                type: 'object',
+                required: ['carId', 'userId', 'rating'],
                 properties: {
-                    brand:      { type: 'string' },
-                    model:      { type: 'string' },
-                    year:       { type: 'integer' },
-                    type:       { type: 'string' },
-                    dailyPrice: { type: 'number' },
-                    status:     { type: 'string' },
-                },
-            },
+                    carId:   { type: 'integer' },
+                    userId:  { type: 'integer' },
+                    rating:  { type: 'integer' },
+                    comment: { type: 'string' }
+                }
+            }
         },
         async handler(request, reply) {
-            const data = await job.createCar(request.body, request.info);
+            const data = await job.createReview(request.body, request.info);
             
             if (data.statusCode !== 201) {
                 reply.code(data.statusCode);
             }
             
             reply.send(data);
-        },
+        }
     });
     
     fastify.route({
@@ -109,32 +105,30 @@ module.exports = function (fastify, opts, next) {
         url:    '/:id',
         schema: {
             params: {
-                type:       'object',
+                type: 'object',
                 properties: {
-                    id: { type: 'integer' },
-                },
+                    id: { type: 'integer' }
+                }
             },
-            body:   {
-                type:       'object',
+            body: {
+                type: 'object',
                 properties: {
-                    brand:      { type: 'string' },
-                    model:      { type: 'string' },
-                    year:       { type: 'integer' },
-                    type:       { type: 'string' },
-                    dailyPrice: { type: 'number' },
-                    status:     { type: 'string' },
-                },
-            },
+                    carId:   { type: 'integer' },
+                    userId:  { type: 'integer' },
+                    rating:  { type: 'integer' },
+                    comment: { type: 'string' }
+                }
+            }
         },
         async handler(request, reply) {
-            const data = await job.updateCar(request.params, request.body, request.info);
+            const data = await job.updateReview(request.params, request.body, request.info);
             
             if (data.statusCode !== 200) {
                 reply.code(data.statusCode);
             }
             
             reply.send(data);
-        },
+        }
     });
     
     fastify.route({
@@ -142,24 +136,24 @@ module.exports = function (fastify, opts, next) {
         url:    '/:id',
         schema: {
             params: {
-                type:       'object',
+                type: 'object',
                 properties: {
-                    id: { type: 'integer' },
-                },
-            },
+                    id: { type: 'integer' }
+                }
+            }
         },
         async handler(request, reply) {
-            const data = await job.deleteCar(request.params, request.info);
+            const data = await job.deleteReview(request.params, request.info);
             
             if (data.statusCode !== 204) {
                 reply.code(data.statusCode);
             }
             
             reply.send(data);
-        },
+        }
     });
     
     next();
 };
 
-module.exports.autoPrefix = process.env.API + 'cars';
+module.exports.autoPrefix = process.env.API + 'reviews';

@@ -1,5 +1,5 @@
-const { winston, checkTokenAndSetReq } = require('../../dependes');
-const job = require('../../handlers/cars/handler');
+const { winston, checkTokenAndSetReq, constants } = require('../../dependes');
+const job = require('../../handlers/admin/handler');
 
 module.exports = function (fastify, opts, next) {
     fastify.addHook('preHandler', async (request, reply) => {
@@ -10,6 +10,12 @@ module.exports = function (fastify, opts, next) {
                 if (ch.isExpired) {
                     reply.code(403);
                     reply.send({ 'message': 'Token expired', 'statusCode': 403 });
+                    return;
+                }
+                
+                if (request.info.userRole !== constants.userRole.admin) {
+                    reply.code(403);
+                    reply.send({ 'message': 'Access denied', 'statusCode': 403 });
                     return;
                 }
             }
@@ -34,17 +40,13 @@ module.exports = function (fastify, opts, next) {
             querystring: {
                 type:       'object',
                 properties: {
-                    page:    { type: 'integer' },
-                    limit:   { type: 'integer' },
-                    type:    { type: 'string' },
-                    minYear: { type: 'integer' },
-                    maxYear: { type: 'integer' },
-                    status:  { type: 'string' },
+                    page:  { type: 'integer' },
+                    limit: { type: 'integer' },
                 },
             },
         },
         async handler(request, reply) {
-            const data = await job.getCars(request.query);
+            const data = await job.getUsers(request.query, request.info);
             
             if (data.statusCode !== 200) {
                 reply.code(data.statusCode);
@@ -66,7 +68,7 @@ module.exports = function (fastify, opts, next) {
             },
         },
         async handler(request, reply) {
-            const data = await job.getCarById(request.params);
+            const data = await job.getUserById(request.params, request.info);
             
             if (data.statusCode !== 200) {
                 reply.code(data.statusCode);
@@ -82,19 +84,16 @@ module.exports = function (fastify, opts, next) {
         schema: {
             body: {
                 type:       'object',
-                required:   [ 'brand', 'model', 'year', 'type', 'dailyPrice' ],
+                required:   [ 'login', 'password', 'role' ],
                 properties: {
-                    brand:      { type: 'string' },
-                    model:      { type: 'string' },
-                    year:       { type: 'integer' },
-                    type:       { type: 'string' },
-                    dailyPrice: { type: 'number' },
-                    status:     { type: 'string' },
+                    login:    { type: 'string' },
+                    password: { type: 'string' },
+                    role:     { type: 'string' },
                 },
             },
         },
         async handler(request, reply) {
-            const data = await job.createCar(request.body, request.info);
+            const data = await job.createUser(request.body, request.info);
             
             if (data.statusCode !== 201) {
                 reply.code(data.statusCode);
@@ -117,17 +116,14 @@ module.exports = function (fastify, opts, next) {
             body:   {
                 type:       'object',
                 properties: {
-                    brand:      { type: 'string' },
-                    model:      { type: 'string' },
-                    year:       { type: 'integer' },
-                    type:       { type: 'string' },
-                    dailyPrice: { type: 'number' },
-                    status:     { type: 'string' },
+                    login:    { type: 'string' },
+                    password: { type: 'string' },
+                    role:     { type: 'string' },
                 },
             },
         },
         async handler(request, reply) {
-            const data = await job.updateCar(request.params, request.body, request.info);
+            const data = await job.updateUser(request.params, request.body, request.info);
             
             if (data.statusCode !== 200) {
                 reply.code(data.statusCode);
@@ -149,7 +145,7 @@ module.exports = function (fastify, opts, next) {
             },
         },
         async handler(request, reply) {
-            const data = await job.deleteCar(request.params, request.info);
+            const data = await job.deleteUser(request.params, request.info);
             
             if (data.statusCode !== 204) {
                 reply.code(data.statusCode);
@@ -162,4 +158,4 @@ module.exports = function (fastify, opts, next) {
     next();
 };
 
-module.exports.autoPrefix = process.env.API + 'cars';
+module.exports.autoPrefix = process.env.API + 'admin';

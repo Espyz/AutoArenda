@@ -1,5 +1,5 @@
 const { winston, checkTokenAndSetReq } = require('../../dependes');
-const job = require('../../handlers/cars/handler');
+const job = require('../../handlers/rentals/handler');
 
 module.exports = function (fastify, opts, next) {
     fastify.addHook('preHandler', async (request, reply) => {
@@ -32,26 +32,25 @@ module.exports = function (fastify, opts, next) {
         url:    '/',
         schema: {
             querystring: {
-                type:       'object',
+                type: 'object',
                 properties: {
                     page:    { type: 'integer' },
                     limit:   { type: 'integer' },
-                    type:    { type: 'string' },
-                    minYear: { type: 'integer' },
-                    maxYear: { type: 'integer' },
-                    status:  { type: 'string' },
-                },
-            },
+                    userId:  { type: 'integer' },
+                    carId:   { type: 'integer' },
+                    status:  { type: 'string' }
+                }
+            }
         },
         async handler(request, reply) {
-            const data = await job.getCars(request.query);
+            const data = await job.getRentals(request.query, request.info);
             
             if (data.statusCode !== 200) {
                 reply.code(data.statusCode);
             }
             
             reply.send(data);
-        },
+        }
     });
     
     fastify.route({
@@ -59,21 +58,21 @@ module.exports = function (fastify, opts, next) {
         url:    '/:id',
         schema: {
             params: {
-                type:       'object',
+                type: 'object',
                 properties: {
-                    id: { type: 'integer' },
-                },
-            },
+                    id: { type: 'integer' }
+                }
+            }
         },
         async handler(request, reply) {
-            const data = await job.getCarById(request.params);
+            const data = await job.getRentalById(request.params, request.info);
             
             if (data.statusCode !== 200) {
                 reply.code(data.statusCode);
             }
             
             reply.send(data);
-        },
+        }
     });
     
     fastify.route({
@@ -81,27 +80,26 @@ module.exports = function (fastify, opts, next) {
         url:    '/',
         schema: {
             body: {
-                type:       'object',
-                required:   [ 'brand', 'model', 'year', 'type', 'dailyPrice' ],
+                type: 'object',
+                required: ['userId', 'carId', 'startDate', 'endDate'],
                 properties: {
-                    brand:      { type: 'string' },
-                    model:      { type: 'string' },
-                    year:       { type: 'integer' },
-                    type:       { type: 'string' },
-                    dailyPrice: { type: 'number' },
-                    status:     { type: 'string' },
-                },
-            },
+                    userId:    { type: 'integer' },
+                    carId:     { type: 'integer' },
+                    startDate: { type: 'string', format: 'date' },
+                    endDate:   { type: 'string', format: 'date' },
+                    status:    { type: 'string' }
+                }
+            }
         },
         async handler(request, reply) {
-            const data = await job.createCar(request.body, request.info);
+            const data = await job.createRental(request.body, request.info);
             
             if (data.statusCode !== 201) {
                 reply.code(data.statusCode);
             }
             
             reply.send(data);
-        },
+        }
     });
     
     fastify.route({
@@ -109,32 +107,32 @@ module.exports = function (fastify, opts, next) {
         url:    '/:id',
         schema: {
             params: {
-                type:       'object',
+                type: 'object',
                 properties: {
-                    id: { type: 'integer' },
-                },
+                    id: { type: 'integer' }
+                }
             },
-            body:   {
-                type:       'object',
+            body: {
+                type: 'object',
                 properties: {
-                    brand:      { type: 'string' },
-                    model:      { type: 'string' },
-                    year:       { type: 'integer' },
-                    type:       { type: 'string' },
-                    dailyPrice: { type: 'number' },
-                    status:     { type: 'string' },
-                },
-            },
+                    userId:    { type: 'integer' },
+                    carId:     { type: 'integer' },
+                    startDate: { type: 'string', format: 'date' },
+                    endDate:   { type: 'string', format: 'date' },
+                    totalCost: { type: 'number' },
+                    status:    { type: 'string' }
+                }
+            }
         },
         async handler(request, reply) {
-            const data = await job.updateCar(request.params, request.body, request.info);
+            const data = await job.updateRental(request.params, request.body, request.info);
             
             if (data.statusCode !== 200) {
                 reply.code(data.statusCode);
             }
             
             reply.send(data);
-        },
+        }
     });
     
     fastify.route({
@@ -142,24 +140,24 @@ module.exports = function (fastify, opts, next) {
         url:    '/:id',
         schema: {
             params: {
-                type:       'object',
+                type: 'object',
                 properties: {
-                    id: { type: 'integer' },
-                },
-            },
+                    id: { type: 'integer' }
+                }
+            }
         },
         async handler(request, reply) {
-            const data = await job.deleteCar(request.params, request.info);
+            const data = await job.deleteRental(request.params, request.info);
             
             if (data.statusCode !== 204) {
                 reply.code(data.statusCode);
             }
             
             reply.send(data);
-        },
+        }
     });
     
     next();
 };
 
-module.exports.autoPrefix = process.env.API + 'cars';
+module.exports.autoPrefix = process.env.API + 'rentals';

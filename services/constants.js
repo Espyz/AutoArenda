@@ -6,6 +6,17 @@ const carsStatus = {
     rented:    2,
 };
 
+const userRole = {
+    1: 'Клиент',
+    2: 'Менеджер',
+    3: 'Админ',
+    
+    client:  1,
+    manager: 2,
+    admin:   3,
+};
+
 module.exports = {
     carsStatus: carsStatus,
+    userRole:   userRole,
 };
