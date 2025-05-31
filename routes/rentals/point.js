@@ -32,15 +32,15 @@ module.exports = function (fastify, opts, next) {
         url:    '/',
         schema: {
             querystring: {
-                type: 'object',
+                type:       'object',
                 properties: {
-                    page:    { type: 'integer' },
-                    limit:   { type: 'integer' },
-                    userId:  { type: 'integer' },
-                    carId:   { type: 'integer' },
-                    status:  { type: 'string' }
-                }
-            }
+                    page:   { type: 'integer' },
+                    limit:  { type: 'integer' },
+                    userId: { type: 'integer' },
+                    carId:  { type: 'integer' },
+                    status: { type: 'string' },
+                },
+            },
         },
         async handler(request, reply) {
             const data = await job.getRentals(request.query, request.info);
@@ -50,7 +50,7 @@ module.exports = function (fastify, opts, next) {
             }
             
             reply.send(data);
-        }
+        },
     });
     
     fastify.route({
@@ -58,11 +58,11 @@ module.exports = function (fastify, opts, next) {
         url:    '/:id',
         schema: {
             params: {
-                type: 'object',
+                type:       'object',
                 properties: {
-                    id: { type: 'integer' }
-                }
-            }
+                    id: { type: 'integer' },
+                },
+            },
         },
         async handler(request, reply) {
             const data = await job.getRentalById(request.params, request.info);
@@ -72,7 +72,7 @@ module.exports = function (fastify, opts, next) {
             }
             
             reply.send(data);
-        }
+        },
     });
     
     fastify.route({
@@ -80,26 +80,26 @@ module.exports = function (fastify, opts, next) {
         url:    '/',
         schema: {
             body: {
-                type: 'object',
-                required: ['userId', 'carId', 'startDate', 'endDate'],
+                type:       'object',
                 properties: {
                     userId:    { type: 'integer' },
                     carId:     { type: 'integer' },
-                    startDate: { type: 'string', format: 'date' },
-                    endDate:   { type: 'string', format: 'date' },
-                    status:    { type: 'string' }
-                }
-            }
+                    startDate: { type: 'string' },
+                    endDate:   { type: 'string' },
+                    status:    { type: 'string' },
+                },
+                required:   [ 'userId', 'carId', 'startDate', 'endDate' ],
+            },
         },
         async handler(request, reply) {
             const data = await job.createRental(request.body, request.info);
             
-            if (data.statusCode !== 201) {
+            if (data.statusCode !== 200) {
                 reply.code(data.statusCode);
             }
             
             reply.send(data);
-        }
+        },
     });
     
     fastify.route({
@@ -107,32 +107,32 @@ module.exports = function (fastify, opts, next) {
         url:    '/:id',
         schema: {
             params: {
-                type: 'object',
+                type:       'object',
                 properties: {
-                    id: { type: 'integer' }
-                }
+                    id: { type: 'integer' },
+                },
             },
-            body: {
-                type: 'object',
+            body:   {
+                type:       'object',
                 properties: {
                     userId:    { type: 'integer' },
                     carId:     { type: 'integer' },
                     startDate: { type: 'string', format: 'date' },
                     endDate:   { type: 'string', format: 'date' },
                     totalCost: { type: 'number' },
-                    status:    { type: 'string' }
-                }
-            }
+                    status:    { type: 'string' },
+                },
+            },
         },
         async handler(request, reply) {
-            const data = await job.updateRental(request.params, request.body, request.info);
+            const data = await job.updateRental({ ...request.params, ...request.body }, request.info);
             
             if (data.statusCode !== 200) {
                 reply.code(data.statusCode);
             }
             
             reply.send(data);
-        }
+        },
     });
     
     fastify.route({
@@ -140,21 +140,21 @@ module.exports = function (fastify, opts, next) {
         url:    '/:id',
         schema: {
             params: {
-                type: 'object',
+                type:       'object',
                 properties: {
-                    id: { type: 'integer' }
-                }
-            }
+                    id: { type: 'integer' },
+                },
+            },
         },
         async handler(request, reply) {
             const data = await job.deleteRental(request.params, request.info);
             
-            if (data.statusCode !== 204) {
+            if (data.statusCode !== 200) {
                 reply.code(data.statusCode);
             }
             
             reply.send(data);
-        }
+        },
     });
     
     next();

@@ -32,14 +32,14 @@ module.exports = function (fastify, opts, next) {
         url:    '/',
         schema: {
             querystring: {
-                type: 'object',
+                type:       'object',
                 properties: {
-                    page:    { type: 'integer' },
-                    limit:   { type: 'integer' },
-                    carId:   { type: 'integer' },
-                    userId:  { type: 'integer' }
-                }
-            }
+                    page:   { type: 'integer' },
+                    limit:  { type: 'integer' },
+                    carId:  { type: 'integer' },
+                    userId: { type: 'integer' },
+                },
+            },
         },
         async handler(request, reply) {
             const data = await job.getReviews(request.query, request.info);
@@ -49,7 +49,7 @@ module.exports = function (fastify, opts, next) {
             }
             
             reply.send(data);
-        }
+        },
     });
     
     fastify.route({
@@ -57,11 +57,11 @@ module.exports = function (fastify, opts, next) {
         url:    '/:id',
         schema: {
             params: {
-                type: 'object',
+                type:       'object',
                 properties: {
-                    id: { type: 'integer' }
-                }
-            }
+                    id: { type: 'integer' },
+                },
+            },
         },
         async handler(request, reply) {
             const data = await job.getReviewById(request.params, request.info);
@@ -71,7 +71,7 @@ module.exports = function (fastify, opts, next) {
             }
             
             reply.send(data);
-        }
+        },
     });
     
     fastify.route({
@@ -79,25 +79,24 @@ module.exports = function (fastify, opts, next) {
         url:    '/',
         schema: {
             body: {
-                type: 'object',
-                required: ['carId', 'userId', 'rating'],
+                type:       'object',
                 properties: {
                     carId:   { type: 'integer' },
-                    userId:  { type: 'integer' },
                     rating:  { type: 'integer' },
-                    comment: { type: 'string' }
-                }
-            }
+                    comment: { type: 'string' },
+                },
+                required:   [ 'carId', 'rating' ],
+            },
         },
         async handler(request, reply) {
             const data = await job.createReview(request.body, request.info);
             
-            if (data.statusCode !== 201) {
+            if (data.statusCode !== 200) {
                 reply.code(data.statusCode);
             }
             
             reply.send(data);
-        }
+        },
     });
     
     fastify.route({
@@ -105,30 +104,29 @@ module.exports = function (fastify, opts, next) {
         url:    '/:id',
         schema: {
             params: {
-                type: 'object',
+                type:       'object',
                 properties: {
-                    id: { type: 'integer' }
-                }
+                    id: { type: 'integer' },
+                },
             },
-            body: {
-                type: 'object',
+            body:   {
+                type:       'object',
                 properties: {
-                    carId:   { type: 'integer' },
-                    userId:  { type: 'integer' },
                     rating:  { type: 'integer' },
-                    comment: { type: 'string' }
-                }
-            }
+                    comment: { type: 'string' },
+                },
+                required:   [ 'rating', 'comment' ],
+            },
         },
         async handler(request, reply) {
-            const data = await job.updateReview(request.params, request.body, request.info);
+            const data = await job.updateReview({ ...request.params, ...request.body }, request.info);
             
             if (data.statusCode !== 200) {
                 reply.code(data.statusCode);
             }
             
             reply.send(data);
-        }
+        },
     });
     
     fastify.route({
@@ -136,21 +134,21 @@ module.exports = function (fastify, opts, next) {
         url:    '/:id',
         schema: {
             params: {
-                type: 'object',
+                type:       'object',
                 properties: {
-                    id: { type: 'integer' }
-                }
-            }
+                    id: { type: 'integer' },
+                },
+            },
         },
         async handler(request, reply) {
             const data = await job.deleteReview(request.params, request.info);
             
-            if (data.statusCode !== 204) {
+            if (data.statusCode !== 200) {
                 reply.code(data.statusCode);
             }
             
             reply.send(data);
-        }
+        },
     });
     
     next();

@@ -16,7 +16,22 @@ const userRole = {
     admin:   3,
 };
 
+const rentalsStatus = {
+    1: 'На рассмотрении',
+    2: 'Передано арендатору',
+    3: 'Закончено',
+    4: 'Отменено',
+    5: 'Просрочено',
+    
+    pending:   1,
+    toRentor:  2,
+    completed:  3,
+    cancelled: 4,
+    expired:   5,
+};
+
 module.exports = {
-    carsStatus: carsStatus,
-    userRole:   userRole,
+    carsStatus:    carsStatus,
+    userRole:      userRole,
+    rentalsStatus: rentalsStatus,
 };

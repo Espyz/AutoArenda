@@ -82,7 +82,6 @@ module.exports = function (fastify, opts, next) {
         schema: {
             body: {
                 type:       'object',
-                required:   [ 'brand', 'model', 'year', 'type', 'dailyPrice' ],
                 properties: {
                     brand:      { type: 'string' },
                     model:      { type: 'string' },
@@ -91,6 +90,7 @@ module.exports = function (fastify, opts, next) {
                     dailyPrice: { type: 'number' },
                     status:     { type: 'string' },
                 },
+                required:   [ 'brand', 'model', 'year', 'type', 'dailyPrice' ],
             },
         },
         async handler(request, reply) {
@@ -117,17 +117,17 @@ module.exports = function (fastify, opts, next) {
             body:   {
                 type:       'object',
                 properties: {
-                    brand:      { type: 'string' },
-                    model:      { type: 'string' },
-                    year:       { type: 'integer' },
-                    type:       { type: 'string' },
-                    dailyPrice: { type: 'number' },
-                    status:     { type: 'string' },
+                    brand:    { type: 'string' },
+                    model:    { type: 'string' },
+                    year:     { type: 'integer' },
+                    type:     { type: 'string' },
+                    dayPrice: { type: 'number' },
+                    status:   { type: 'string' },
                 },
             },
         },
         async handler(request, reply) {
-            const data = await job.updateCar(request.params, request.body, request.info);
+            const data = await job.updateCar({ ...request.params, ...request.body }, request.info);
             
             if (data.statusCode !== 200) {
                 reply.code(data.statusCode);
