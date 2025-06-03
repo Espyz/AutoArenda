@@ -55,7 +55,7 @@ async function checkTokenAndSetReq(request) {
             try {
                 const checkExpire = await client.query(`SELECT NOW() < "expireTime" AS "check"
                                                         FROM tokens
-                                                        WHERE token LIKE $1`, [ `%${ token }%` ]);
+                                                        WHERE TRIM(token) = $1`, [ token ]);
                 
                 if (checkExpire.rows.length > 0) {
                     if (checkExpire.rows[0].check) {
