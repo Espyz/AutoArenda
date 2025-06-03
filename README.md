@@ -35,7 +35,7 @@ API для системы аренды автомобилей, позволяю�
    Скопируйте `.env.example` в `.env` и заполните значения:
    ```env
    DATABASE_URL=postgres://user:password@localhost:5432/autoarenda
-   JWT_SECRET=your_jwt_secret_key
+   PRIVATE_KEY=your_jwt_secret_key
    API=/api/v1/
    ```
 
